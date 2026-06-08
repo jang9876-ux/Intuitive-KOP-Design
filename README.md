@@ -1,16 +1,15 @@
 ```mermaid
 erDiagram
-    M_USER_ACCOUNT ||--oN M_USER_DEVICE : "1 : N (MFA/기기 검증)"
-    M_USER_ACCOUNT ||--oN T_ORDER_HEADER : "1 : N (주문 생성)"
-    M_USER_ACCOUNT ||--oN M_FIELD_CONFIG : "1 : N (규칙 관리)"
-    M_USER_ACCOUNT ||--oN T_ORDER_STATUS_HISTORY : "1 : N (변경자 기록)"
+    M_USER_ACCOUNT ||--o{ M_USER_DEVICE : "1 : N (MFA/기기 검증)"
+    M_USER_ACCOUNT ||--o{ T_ORDER_HEADER : "1 : N (주문 생성)"
+    M_USER_ACCOUNT ||--o{ M_FIELD_CONFIG : "1 : N (규칙 관리)"
+    M_USER_ACCOUNT ||--o{ T_ORDER_STATUS_HISTORY : "1 : N (변경자 기록)"
 
-    M_FIELD_CATALOG ||--oN M_FIELD_CONFIG : "1 : N (필드 속성 확장)"
+    M_FIELD_CATALOG ||--o{ M_FIELD_CONFIG : "1 : N (필드 속성 확장)"
 
-    T_ORDER_HEADER ||--pN T_ORDER_ITEM : "1 : N (주문 상세 품목)"
-    T_ORDER_HEADER ||--oN T_ORDER_STATUS_HISTORY : "1 : N (상태 추적)"
+    T_ORDER_HEADER ||--|{ T_ORDER_ITEM : "1 : N (주문 상세 품목)"
+    T_ORDER_HEADER ||--o{ T_ORDER_STATUS_HISTORY : "1 : N (상태 추적)"
 
-    %% 독립/글로벌 참조 테이블 그룹 (인터셉터 연동 및 상태 기계 메트릭스)
     M_STATUS_SEQUENCE {
         int sequence_id PK
         string country_code
@@ -35,7 +34,7 @@ erDiagram
     M_USER_ACCOUNT {
         string user_id PK
         string user_name
-        string email UK
+        string email
         string password_hash
         string role_code
         string scope_type
@@ -74,7 +73,7 @@ erDiagram
     }
 
     T_ORDER_HEADER {
-        string order_id PK "KOP-YYYYMMDD-XXXX"
+        string order_id PK
         string sap_sales_order_id
         string user_id FK
         string country_code
