@@ -1,14 +1,15 @@
 ```mermaid
 erDiagram
-    M_USER_ACCOUNT ||--o{ M_USER_DEVICE : "1 : N (MFA/기기 검증)"
-    M_USER_ACCOUNT ||--o{ T_ORDER_HEADER : "1 : N (주문 생성)"
-    M_USER_ACCOUNT ||--o{ M_FIELD_CONFIG : "1 : N (규칙 관리)"
-    M_USER_ACCOUNT ||--o{ T_ORDER_STATUS_HISTORY : "1 : N (변경자 기록)"
+    M_USER_ACCOUNT ||--o{ M_USER_DEVICE : "1 : N (MFA/기기 검증)<br>user_id ➔ user_id"
+    M_USER_ACCOUNT ||--o{ T_ORDER_HEADER : "1 : N (주문 생성)<br>user_id ➔ user_id"
+    M_USER_ACCOUNT ||--o{ M_FIELD_CONFIG : "1 : N (규칙 관리)<br>user_id ➔ updated_by"
+    M_USER_ACCOUNT ||--o{ T_ORDER_STATUS_HISTORY : "1 : N (변경자 기록)<br>user_id ➔ changed_by"
 
     M_FIELD_CATALOG ||--o{ M_FIELD_CONFIG : "1 : N (필드 속성 확장)"
 
-    T_ORDER_HEADER ||--|{ T_ORDER_ITEM : "1 : N (주문 상세 품목)"
-    T_ORDER_HEADER ||--o{ T_ORDER_STATUS_HISTORY : "1 : N (상태 추적)"
+    T_ORDER_HEADER ||--|{ T_ORDER_ITEM : "1 : N (주문 상세 품목)<br>order_id ➔ order_id"
+    T_ORDER_HEADER ||--o{ T_ORDER_STATUS_HISTORY : "1 : N (상태 추적)<br>order_id ➔ order_id"
+
 
     M_STATUS_SEQUENCE {
         int sequence_id PK
