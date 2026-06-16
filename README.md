@@ -1,15 +1,30 @@
 ```mermaid
 erDiagram
+    %% ==========================================
     %% 1. 관계(Relationships) 정의
+    %% ==========================================
+    
+    %% 사용자 및 권한 영역
     M_USER_ACCOUNT ||--o{ M_USER_DEVICE : "1 : N (MFA/기기 검증)"
     M_USER_ACCOUNT ||--o{ T_ORDER_HEADER : "1 : N (주문 생성)"
     M_USER_ACCOUNT ||--o{ M_FIELD_CONFIG : "1 : N (규칙 관리)"
     M_USER_ACCOUNT ||--o{ T_ORDER_STATUS_HISTORY : "1 : N (변경자 기록)"
+    
+    %% 동적 필드 및 UI 설정 영역
     M_FIELD_CATALOG ||--o{ M_FIELD_CONFIG : "1 : N (필드 속성 확장)"
+    
+    %% 상품 마스터 영역 (신규 통합)
+    M_PRODUCT ||--o{ M_PRODUCT_PRICE : "1 : N (국가/통화별 단가 정책)"
+    M_PRODUCT ||--o{ T_ORDER_ITEM : "1 : N (주문 상세 품목 매핑)"
+    
+    %% 주문 트랜잭션 영역
     T_ORDER_HEADER ||--|{ T_ORDER_ITEM : "1 : N (주문 상세 품목)"
     T_ORDER_HEADER ||--o{ T_ORDER_STATUS_HISTORY : "1 : N (상태 추적)"
 
-    %% 2. 엔티티(Entities) 정의 및 필드 코멘트(Description) 포함
+    %% ==========================================
+    %% 2. 엔티티(Entities) 정의 및 필드 코멘트
+    %% ==========================================
+
     M_USER_ACCOUNT {
         string user_id PK "사용자 고유 ID (이메일/사번)"
         string user_name "사용자 성명"
@@ -30,6 +45,26 @@ erDiagram
         boolean is_trusted "신뢰할 수 있는 기기 여부 (OTP 스킵)"
         string otp_code "발송된 일회용 비밀번호"
         timestamp otp_expired_at "OTP 코드 만료 일시"
+    }
+
+    M_PRODUCT {
+        string product_code PK "SAP 제품 코드 (Material No / SKU)"
+        string product_name "제품명"
+        string category "제품 카테고리 (예: Instruments)"
+        string description "제품 상세 설명"
+        string image_url "제품 이미지 썸네일 S3 경로"
+        boolean is_active "포털 노출(활성화) 여부"
+        timestamp sap_sync_at "SAP 마스터 데이터 최종 동기화 시각"
+    }
+
+    M_PRODUCT_PRICE {
+        int price_id PK "단가 고유 식별 번호"
+        string product_code FK "대상 제품 코드"
+        string country_code "적용 국가 코드 (예: KR, JP)"
+        string currency "결제 통화 (예: KRW, USD)"
+        numeric unit_price "기본 판매 단가"
+        date valid_from "단가 적용 시작일"
+        date valid_to "단가 적용 종료일"
     }
 
     M_FIELD_CATALOG {
@@ -72,7 +107,7 @@ erDiagram
     T_ORDER_ITEM {
         int item_id PK "품목 고유 식별자"
         string order_id FK "소속 주문 번호"
-        string product_code "SAP 제품 코드(Material No)"
+        string product_code FK "SAP 제품 코드(Material No)"
         string product_name "제품명"
         int quantity "주문 총 수량"
         int delivered_quantity "실제 출고/배송 완료 수량"
