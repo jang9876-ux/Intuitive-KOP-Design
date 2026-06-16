@@ -1,6 +1,5 @@
 ```mermaid
 erDiagram
-    %% (관계선은 기존과 동일) %%
 
     M_FIELD_CONFIG {
         int config_id PK
@@ -12,7 +11,7 @@ erDiagram
         boolean is_visible
         boolean is_required
         jsonb pulldown_values
-        int display_seq %% 추가됨: UI 렌더링 표시 순서 (요구사항 반영) %%
+        int display_seq
         string updated_by FK
     }
 
@@ -23,14 +22,14 @@ erDiagram
         string country_code
         string order_type
         string order_status
-        string payment_status %% 추가됨: 지불 완료 여부 분기 처리를 위함 (PDF 반영) %%
+        string payment_status
         string po_number
         string po_file_path
         string pod_signature_path
         string currency
         numeric total_amount
         string sap_sync_status
-        timestamp sap_sync_at %% 추가됨: PIPO/SAP 전송 시간 기록 %%
+        timestamp sap_sync_at
     }
 
     T_ORDER_ITEM {
@@ -39,7 +38,7 @@ erDiagram
         string product_code
         string product_name
         int quantity
-        int delivered_quantity %% 추가됨: 부분배송중/부분배송완료 상태 관리를 위함 %%
+        int delivered_quantity
         numeric unit_price
         numeric item_total_amount
     }
